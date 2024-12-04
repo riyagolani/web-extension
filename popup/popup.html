@@ -1,16 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="popup.css">
-  <title>Web Notes</title>
+    <title>Web Notes Extension</title>
+    <style>
+        body {
+            width: 300px;
+            padding: 15px;
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f9;
+        }
+        .action-btn {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .action-btn:hover {
+            background-color: #2980b9;
+        }
+        #quick-note {
+            width: 100%;
+            min-height: 100px;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            resize: vertical;
+        }
+    </style>
 </head>
 <body>
-  <button id="login-btn">Login</button>
-  <button id="logout-btn">Logout</button>
-  <textarea id="note-input" placeholder="Write your note..."></textarea>
-  <button id="saveNote">Save Note</button>
-  <script defer src="popup.js"></script>
+    <h2>Web Notes</h2>
+    
+    <textarea id="quick-note" placeholder="Enter a quick note..."></textarea>
+    
+    <button id="save-quick-note" class="action-btn">Save Quick Note</button>
+    <button id="summarize-page" class="action-btn">Summarize Page</button>
+    <button id="open-dashboard" class="action-btn">Open Dashboard</button>
+
+    <script src="popup.js" type="module"></script>
 </body>
 </html>
