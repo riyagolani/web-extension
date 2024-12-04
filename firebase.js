@@ -1,10 +1,7 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyCBoFiRVZcpQ05dMep58LvjXSuPtunD2gA",
   authDomain: "notes-with-ai.firebaseapp.com",
@@ -15,8 +12,6 @@ const firebaseConfig = {
   measurementId: "G-FPBSPFRPVP"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const auth = getAuth(app);
-export const provider = new GoogleAuthProvider();

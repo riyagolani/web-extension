@@ -1,34 +1,43 @@
 {
   "manifest_version": 3,
-  "name": "Notes Web Extension",
+  "name": "Web Page Notes",
   "version": "1.0",
+  "description": "Take notes on any web page and summarize content",
   "permissions": [
     "storage",
-    "activeTab"
+    "activeTab",
+    "tabs",
+    "https://*/*",
+    "http://*/*"
   ],
-  "background": {
-    "service_worker": "background.js",
-    "type": "module"
-  },
-  "content_scripts": [
-    {
-      "matches": [
-        "<all_urls>"
-      ],
-      "js": [
-        "content.js"
-      ],
-      "css": [
-        "content.css"
-      ]
-    }
+  "host_permissions": [
+    "https://*/*",
+    "http://*/*"
   ],
   "action": {
-    "default_popup": "popup/popup.html",
+    "default_popup": "popup.html",
     "default_icon": {
       "16": "assets/icons/icon16.png",
       "48": "assets/icons/icon48.png",
       "128": "assets/icons/icon128.png"
     }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "web_accessible_resources": [{
+    "resources": ["dashboard.html"],
+    "matches": ["<all_urls>"]
+  }],
+  "icons": {
+    "16": "assets/icons/icon16.png",
+    "48": "assets/icons/icon48.png",
+    "128": "assets/icons/icon128.png"
   }
 }

@@ -1,91 +1,123 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+import { auth, db } from './firebase.js';
+import { 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword, 
+  signOut 
+} from 'firebase/auth';
+import { 
+  collection, 
+  query, 
+  where, 
+  getDocs, 
+  deleteDoc, 
+  doc 
+} from 'firebase/firestore';
 
-// Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyCBoFiRVZcpQ05dMep58LvjXSuPtunD2gA",
-  authDomain: "notes-with-ai.firebaseapp.com",
-  projectId: "notes-with-ai",
-  storageBucket: "notes-with-ai.firebasestorage.app",
-  messagingSenderId: "279555883034",
-  appId: "1:279555883034:web:8fe731c10f6faaa5af11a3",
-  measurementId: "G-FPBSPFRPVP"
-};
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
+const loginBtn = document.getElementById('login-btn');
+const signupBtn = document.getElementById('signup-btn');
+const logoutBtn = document.getElementById('logout-btn');
+const authContainer = document.getElementById('auth-container');
+const dashboardContainer = document.getElementById('dashboard');
+const notesBySiteContainer = document.getElementById('notes-by-site');
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
-
-/// Handle login
-document.getElementById('login-btn').addEventListener('click', async () => {
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
+// Login
+loginBtn.addEventListener('click', async () => {
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    alert(`Welcome back, ${userCredential.user.email}`);
-    loadNotes(userCredential.user.uid); // Load notes after login
+    await signInWithEmailAndPassword(
+      auth, 
+      emailInput.value, 
+      passwordInput.value
+    );
+    showDashboard();
   } catch (error) {
     alert(error.message);
   }
 });
 
-// Handle signup
-document.getElementById('signup-btn').addEventListener('click', async () => {
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
+// Signup
+signupBtn.addEventListener('click', async () => {
   try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    alert(`Account created, welcome ${userCredential.user.email}`);
-    loadNotes(userCredential.user.uid); // Load notes after signup
+    await createUserWithEmailAndPassword(
+      auth, 
+      emailInput.value, 
+      passwordInput.value
+    );
+    showDashboard();
   } catch (error) {
     alert(error.message);
   }
 });
 
-// Handle logout
-document.getElementById('logout-btn').addEventListener('click', async () => {
-  try {
-    await signOut(auth);
-    alert('You have logged out');
-  } catch (error) {
-    alert(error.message);
-  }
+// Logout
+logoutBtn.addEventListener('click', async () => {
+  await signOut(auth);
+  showLoginForm();
 });
 
-// Load notes for the logged-in user
-async function loadNotes(uid) {
-  const q = query(collection(db, "notes"), where("uid", "==", uid));
+// Fetch and display notes
+async function fetchNotesBySite() {
+  const user = auth.currentUser;
+  const notesRef = collection(db, 'web-notes');
+  const q = query(notesRef, where('userId', '==', user.uid));
+  
   const querySnapshot = await getDocs(q);
-  const notesContainer = document.getElementById("notesContainer");
-  notesContainer.innerHTML = ''; // Clear existing notes
+  const notesBySite = {};
 
   querySnapshot.forEach((doc) => {
-    const noteData = doc.data();
-    const noteDiv = document.createElement("div");
-    noteDiv.textContent = noteData.note;
-    notesContainer.appendChild(noteDiv);
+    const note = { id: doc.id, ...doc.data() };
+    if (!notesBySite[note.url]) {
+      notesBySite[note.url] = [];
+    }
+    notesBySite[note.url].push(note);
+  });
+
+  renderNotesBySite(notesBySite);
+}
+
+function renderNotesBySite(notesBySite) {
+  notesBySiteContainer.innerHTML = '';
+  Object.entries(notesBySite).forEach(([url, notes]) => {
+    const siteSection = document.createElement('div');
+    siteSection.innerHTML = `
+      <h3>${url}</h3>
+      ${notes.map(note => `
+        <div class="note">
+          ${note.summary}
+          <button class="delete-note" data-id="${note.id}">Delete</button>
+        </div>
+      `).join('')}
+    `;
+    notesBySiteContainer.appendChild(siteSection);
+  });
+
+  // Add delete note functionality
+  document.querySelectorAll('.delete-note').forEach(button => {
+    button.addEventListener('click', async (e) => {
+      const noteId = e.target.dataset.id;
+      await deleteDoc(doc(db, 'web-notes', noteId));
+      fetchNotesBySite();
+    });
   });
 }
 
-// Save new note
-async function saveNote() {
-  const user = auth.currentUser;
-  if (!user) {
-    alert("Please log in to save notes.");
-    return;
-  }
-
-  const note = prompt("Enter your note");
-  try {
-    await addDoc(collection(db, "notes"), {
-      uid: user.uid,
-      note: note,
-      timestamp: new Date()
-    });
-    loadNotes(user.uid); // Reload notes after saving
-  } catch (error) {
-    alert(error.message);
-  }
+function showLoginForm() {
+  authContainer.style.display = 'block';
+  dashboardContainer.style.display = 'none';
 }
+
+function showDashboard() {
+  authContainer.style.display = 'none';
+  dashboardContainer.style.display = 'block';
+  fetchNotesBySite();
+}
+
+// Authentication state observer
+auth.onAuthStateChanged((user) => {
+  if (user) {
+    showDashboard();
+  } else {
+    showLoginForm();
+  }
+});

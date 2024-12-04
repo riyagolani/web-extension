@@ -1,0 +1,96 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f7f9;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+  }
+  
+  #auth-container {
+    max-width: 400px;
+    margin: 50px auto;
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  #login-form h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 25px;
+  }
+  
+  #email, #password {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    transition: border-color 0.3s ease;
+  }
+  
+  #email:focus, #password:focus {
+    outline: none;
+    border-color: #3498db;
+  }
+  
+  #login-btn, #signup-btn, #logout-btn {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  #login-btn:hover, #signup-btn:hover, #logout-btn:hover {
+    background-color: #2980b9;
+  }
+  
+  #dashboard {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  #notes-by-site {
+    margin-top: 20px;
+  }
+  
+  #notes-by-site h3 {
+    color: #2c3e50;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .note {
+    background-color: #f4f7f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .delete-note {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .delete-note:hover {
+    background-color: #c0392b;
+  }
